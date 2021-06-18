@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 
 // const password = process.argv[2];
 
-const url = process.env.MONGODB_URL;
+const url = process.env.MONGODB_URL || `mongodb+srv://fullstack:mypassword@cluster0.0mde9.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
 
 console.log("connecting to ", url);
 

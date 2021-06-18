@@ -40,9 +40,9 @@ app.use(express.json());
 //   },
 // ];
 
-const generateId = () => {
-  return Math.random() * (1000000 - 4) + 4;
-};
+// const generateId = () => {
+//   return Math.random() * (1000000 - 4) + 4;
+// };
 
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((person) => {
@@ -79,8 +79,8 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  // console.log(request.body);
 
+  // console.log(request.body);
   // let allNames= persons.map((person)=>person.name)
   // console.log(allNames)
 
