@@ -5,6 +5,7 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const person = require("./models/person");
+const mongoose = require('mongoose')
 
 app.use(cors());
 app.use(express.static("build"));
@@ -16,28 +17,28 @@ app.use(
 );
 app.use(express.json());
 
-let persons = [
-  {
-    name: "Arto ",
-    number: "040-123456",
-    id: 1,
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2,
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3,
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4,
-  },
-];
+// let persons = [
+//   {
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//     id: 1,
+//   },
+//   {
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//     id: 2,
+//   },
+//   {
+//     name: "Dan Abramov",
+//     number: "12-43-234345",
+//     id: 3,
+//   },
+//   {
+//     name: "Mary Poppendieck",
+//     number: "39-23-6423122",
+//     id: 4,
+//   },
+// ];
 
 const generateId = () => {
   return Math.random() * (1000000 - 4) + 4;
@@ -90,11 +91,11 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const newPerson = {
+  const newPerson = new Person ({
     name: body.name,
     number: body.number || "N/A",
     id: generateId(),
-  };
+  });
 
   newPerson.save().then((savedPerson) => {
     response.json(savedPerson);
