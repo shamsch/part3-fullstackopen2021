@@ -1,17 +1,24 @@
+require("dotenv").config();
+const Person = require("./models/person");
 const express = require("express");
 const app = express();
-const morgan = require("morgan")
-const cors = require('cors')
+const morgan = require("morgan");
+const cors = require("cors");
+const person = require("./models/person");
 
-app.use(cors())
-app.use(express.static('build'))
-morgan.token('content', (req) => JSON.stringify(req.body));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'));
+app.use(cors());
+app.use(express.static("build"));
+morgan.token("content", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :content"
+  )
+);
 app.use(express.json());
 
 let persons = [
   {
-    name: "Arto Hellas",
+    name: "Arto ",
     number: "040-123456",
     id: 1,
   },
@@ -37,7 +44,9 @@ const generateId = () => {
 };
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((person) => {
+    response.json(person);
+  });
 });
 
 app.get("/info", (request, response) => {
@@ -47,13 +56,17 @@ app.get("/info", (request, response) => {
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-  if (person) {
+  Person.findById(request.params.id).then((person) => {
     response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  });
+
+  // const id = Number(request.params.id);
+  // const person = persons.find((person) => person.id === id);
+  // if (person) {
+  //   response.json(person);
+  // } else {
+  //   response.status(404).end();
+  // }
 });
 
 app.delete("/api/persons/:id", (request, response) => {
@@ -67,12 +80,13 @@ app.post("/api/persons", (request, response) => {
   const body = request.body;
   // console.log(request.body);
 
-  let allNames= persons.map((person)=>person.name)
-  console.log(allNames)
-  console.log(body.name)
-  if(!body.name||!body.number|| allNames.includes(body.name)){
+  // let allNames= persons.map((person)=>person.name)
+  // console.log(allNames)
+
+  console.log(body.name);
+  if (!body.name || !body.number) {
     return response.status(400).json({
-      error: 'name must be unique',
+      error: "name must be unique",
     });
   }
 
@@ -82,8 +96,9 @@ app.post("/api/persons", (request, response) => {
     id: generateId(),
   };
 
-  persons = persons.concat(newPerson);
-  console.log(persons)
+  newPerson.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 
   response.json(newPerson);
 });

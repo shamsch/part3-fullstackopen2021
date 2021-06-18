@@ -7,14 +7,16 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "git push heroku main",   
+    "deploy": "git push heroku main",
     "logs:prod": "heroku logs --tail"
   },
   "author": "Shamsur Raza Chowdhury",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongoose": "^5.12.14",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
