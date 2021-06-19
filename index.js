@@ -5,7 +5,7 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const person = require("./models/person");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 app.use(cors());
 app.use(express.static("build"));
@@ -45,21 +45,32 @@ app.use(express.json());
 // };
 
 app.get("/api/persons", (request, response) => {
-  Person.find({}).then((person) => {
-    response.json(person);
-  });
+  Person.find({})
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
-  let numberOfPerson = persons.length;
-  let date = new Date();
-  response.send(`Phonebook has info for ${numberOfPerson} persons ${date}`);
+  Person.count({}, (error, count)=>{
+    if(error){
+      next(error);
+    }
+    response.send(`<div>Phonebook has info for ${count} persons</div> <div>${new Date()}</div>`)
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  Person.findById(request.params.id).then((person) => {
-    response.json(person);
-  });
+  Person.findById(request.params.id)
+    .then((person) => {
+      response.json(person);
+    })
+    .catch((error) => next(error));
 
   // const id = Number(request.params.id);
   // const person = persons.find((person) => person.id === id);
@@ -71,10 +82,11 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  response.status(204).end();
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.json(person);
+    })
+    .catch((error) => next(error));
 });
 
 app.post("/api/persons", (request, response) => {
@@ -91,7 +103,7 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const newPerson = new Person ({
+  const newPerson = new Person({
     name: body.name,
     number: body.number || "N/A",
     id: generateId(),
@@ -103,6 +115,33 @@ app.post("/api/persons", (request, response) => {
 
   response.json(newPerson);
 });
+
+app.put("/api/persons/:id", (request, response) => {
+  const person = {
+    name: request.body.name,
+    number: request.body.number
+  }
+  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+    .then((updatedPerson) => {
+      response.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
+//error handling middleware
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// this has to be the last loaded middleware.
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
