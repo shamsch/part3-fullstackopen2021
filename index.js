@@ -57,7 +57,7 @@ app.get("/api/persons", (request, response) => {
 });
 
 app.get("/info", (request, response) => {
-  Person.count({}, (error, count)=>{
+  Person.countDocuments({}, (error, count)=>{
     if(error){
       next(error);
     }
@@ -65,7 +65,7 @@ app.get("/info", (request, response) => {
   });
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
       response.json(person);
@@ -81,7 +81,7 @@ app.get("/api/persons/:id", (request, response) => {
   // }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
       response.json(person);
