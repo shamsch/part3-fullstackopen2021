@@ -1,7 +1,8 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require('mongoose-unique-validator');
+/* eslint-disable linebreak-style */
+const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
-// commented out code was used before connecting the database with backend 
+// commented out code was used before connecting the database with backend
 // if (process.argv.length < 3) {
 //   console.log(
 //     "Please provide the password as an argument: node mongo.js <password>"
@@ -11,9 +12,9 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 // const password = process.argv[2];
 
-const url = process.env.MONGODB_URL;
+const url = process.env.MONGODB_URL
 
-console.log("connecting to MongoDB");
+console.log('connecting to MongoDB')
 
 mongoose
   .connect(url, {
@@ -22,29 +23,30 @@ mongoose
     useFindAndModify: false,
     useCreateIndex: true,
   })
+  // eslint-disable-next-line no-unused-vars
   .then((result) => {
-    console.log("connected to MongoDB");
+    console.log('connected to MongoDB')
   })
   .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
-  });
+    console.log('error connecting to MongoDB:', error.message)
+  })
 
 const personSchema = new mongoose.Schema({
-  name: {type: String, required: true, unique: true, minLength: 3},
-  number: {type: String, required: true, unique: true, minLength: 8},
-});
+  name: { type: String, required: true, unique: true, minLength: 3 },
+  number: { type: String, required: true, unique: true, minLength: 8 },
+})
 
-personSchema.plugin(uniqueValidator);
+personSchema.plugin(uniqueValidator)
 //modifying the object returned by mongoose to json format
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
   },
-});
+})
 
-module.exports= mongoose.model("Person", personSchema);
+module.exports= mongoose.model('Person', personSchema)
 
 // if (process.argv.length === 3) {
 //   Person.find({}).then((result) => {
